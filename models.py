@@ -1,26 +1,41 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Date, DateTime, func
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Decimal
 from sqlalchemy.orm import relationship
 from db_setup import Base
 
-class User(Base):
-    __tablename__ = "users"
+class Category(Base):
+    __tablename__ = "categories"
+    
+    id_category = Column(Integer, primary_key=True, index=True)
+    description = Column(String(100), nullable=False)
 
+    # Relationship with restaurants
+    restaurants = relationship("Restaurant", back_populates="category")
+
+class Location(Base):
+    __tablename__ = "locations"
+    
+    id_location = Column(Integer, primary_key=True, index=True)
+    city = Column(String(100), nullable=False)
+    country = Column(String(100), nullable=False)
+
+    # Relationship with restaurants
+    restaurants = relationship("Restaurant", back_populates="location")
+
+class Restaurant(Base):
+    __tablename__ = "restaurants"
+    
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False)
-    email = Column(String(100), unique=True, nullable=False)
-    created_at = Column(DateTime, default=func.now())
-
-    tasks = relationship("Task", back_populates="user", cascade="all, delete-orphan")
-
-class Task(Base):
-    __tablename__ = "tasks"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    title = Column(String(255), nullable=False)
-    description = Column(Text)
-    status = Column(String(20), default="pending")
-    due_date = Column(Date)
-    created_at = Column(DateTime, default=func.now())
-
-    user = relationship("User", back_populates="tasks")
+    name = Column(String(255), nullable=False)
+    address = Column(Text, nullable=False)
+    price = Column(String(50))
+    rating = Column(Decimal(2, 1))
+    cuisine_type = Column(String(100))
+    latitude = Column(Decimal(10, 6))
+    longitude = Column(Decimal(10, 6))
+    
+    # Relationships with other tables
+    id_category = Column(Integer, ForeignKey("categories.id_category"))
+    id_location = Column(Integer, ForeignKey("locations.id_location"))
+    
+    category = relationship("Category", back_populates="restaurants")
+    location = relationship("Location", back_populates="restaurants")
