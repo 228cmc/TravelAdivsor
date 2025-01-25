@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mis Restaurantes</title>
+</head>
+<body>
+    <h1>Lista de Restaurantes</h1>
+    <ul>
+      {% for r in restaurants %}
+        <li>{{ r.name }} - {{ r.rating }} estrellas</li>
+      {% endfor %}
+    </ul>
+</body>
+</html>
